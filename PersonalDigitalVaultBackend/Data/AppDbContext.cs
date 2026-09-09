@@ -7,6 +7,7 @@ namespace PersonalDigitalVaultBackend.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        public DbSet<CredentialRecord> Credentials => Set<CredentialRecord>();
         public DbSet<ApplicationUser> Users => Set<ApplicationUser>();
 
 
@@ -14,6 +15,19 @@ namespace PersonalDigitalVaultBackend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<CredentialRecord>(entity =>
+            {
+                entity.HasOne(c => c.User)
+                      .WithMany(u => u.Credentials)
+                      .HasForeignKey(c => c.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(c => c.Folder)
+                      .WithMany(f => f.Credentials)
+                      .HasForeignKey(c => c.FolderId)
+                      .OnDelete(DeleteBehavior.Restrict); 
+             });
+             
             modelBuilder.Entity<ApplicationUser>(entity =>
             {
                 entity.HasIndex(u => u.Username).IsUnique();
