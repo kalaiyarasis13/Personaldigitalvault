@@ -25,6 +25,7 @@ namespace PersonalDigitalVaultBackend
             builder.Services.AddScoped<IAuService , AuthService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
 
+            builder.Services.AddScoped<IAdminService, AdminService>();
             // Add services to the container.
 
             builder.Services.AddControllers();
