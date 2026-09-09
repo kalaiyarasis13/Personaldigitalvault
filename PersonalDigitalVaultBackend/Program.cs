@@ -1,6 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using PersonalDigitalVaultBackend.Data;
+using PersonalDigitalVaultBackend.Services.Implementations;
+using PersonalDigitalVaultBackend.Services.Interface;
 
 namespace PersonalDigitalVaultBackend
 {
@@ -14,6 +16,7 @@ namespace PersonalDigitalVaultBackend
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddScoped<IAdminService, AdminService>();
             // Add services to the container.
 
             builder.Services.AddControllers();
