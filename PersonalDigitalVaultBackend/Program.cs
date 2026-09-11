@@ -23,6 +23,8 @@ namespace PersonalDigitalVaultBackend
             
             
             
+            
+            
 
             // Add services to the container.
 
@@ -34,6 +36,7 @@ namespace PersonalDigitalVaultBackend
             builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             builder.Services.AddScoped<IFolderRepository, FolderRepository>();
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+            builder.Services.AddScoped<ISharedLinkRepository, SharedLinkRepository>();
             
 
             // ---------- Services ----------
@@ -44,6 +47,7 @@ namespace PersonalDigitalVaultBackend
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<IFolderService, FolderService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<ISharingService, SharingService>();
           
             // Add services to the container.
 
