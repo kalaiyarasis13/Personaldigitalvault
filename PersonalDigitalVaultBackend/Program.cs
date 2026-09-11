@@ -1,6 +1,11 @@
 
 using Microsoft.EntityFrameworkCore;
+using PersonalDigitalVault.Services.Implementations;
+using PersonalDigitalVaultBackend.Controllers;
 using PersonalDigitalVaultBackend.Data;
+using PersonalDigitalVaultBackend.Repositories.Implementations;
+using PersonalDigitalVaultBackend.Repositories.Interfaces;
+using PersonalDigitalVaultBackend.Services.Interface;
 
 namespace PersonalDigitalVaultBackend
 {
@@ -14,7 +19,11 @@ namespace PersonalDigitalVaultBackend
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+
             // Add services to the container.
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
