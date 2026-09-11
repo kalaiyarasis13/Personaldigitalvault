@@ -21,6 +21,8 @@ namespace PersonalDigitalVaultBackend
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             
+            
+            
 
             // Add services to the container.
 
@@ -31,6 +33,7 @@ namespace PersonalDigitalVaultBackend
             builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
             builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             builder.Services.AddScoped<IFolderRepository, FolderRepository>();
+            builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             
 
             // ---------- Services ----------
@@ -40,6 +43,8 @@ namespace PersonalDigitalVaultBackend
             builder.Services.AddScoped<IFeedbackService, FeedbackService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<IFolderService, FolderService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+          
             // Add services to the container.
 
 

@@ -7,6 +7,7 @@ namespace PersonalDigitalVaultBackend.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
         public DbSet<FolderCategory> Folders => Set<FolderCategory>();
 
         public DbSet<Feedback> Feedbacks => Set<Feedback>();
@@ -18,6 +19,14 @@ namespace PersonalDigitalVaultBackend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<PaymentTransaction>(entity =>
+            {
+                entity.HasOne(p => p.User)
+                      .WithMany(u => u.PaymentTransactions)
+                      .HasForeignKey(p => p.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+            
             modelBuilder.Entity<FolderCategory>(entity =>
             {
                 entity.HasOne(f => f.User)
