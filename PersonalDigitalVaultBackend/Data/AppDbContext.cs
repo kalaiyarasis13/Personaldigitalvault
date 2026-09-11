@@ -7,6 +7,7 @@ namespace PersonalDigitalVaultBackend.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        public DbSet<FolderCategory> Folders => Set<FolderCategory>();
 
         public DbSet<Feedback> Feedbacks => Set<Feedback>();
         public DbSet<CredentialRecord> Credentials => Set<CredentialRecord>();
@@ -17,6 +18,18 @@ namespace PersonalDigitalVaultBackend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<FolderCategory>(entity =>
+            {
+                entity.HasOne(f => f.User)
+                      .WithMany(u => u.Folders)
+                      .HasForeignKey(f => f.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(f => f.ParentFolder)
+                      .WithMany(f => f.SubFolders)
+                      .HasForeignKey(f => f.ParentFolderId)
+                      .OnDelete(DeleteBehavior.Restrict);
+               });
             modelBuilder.Entity<Feedback>(entity =>
             {
                 entity.HasOne(f => f.User)
@@ -44,5 +57,6 @@ namespace PersonalDigitalVaultBackend.Data
                 entity.HasIndex(u => u.Email).IsUnique();
             });
         }
+
     }
 }
