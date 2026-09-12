@@ -1,0 +1,150 @@
+<div class="max-w-[1080px] mx-auto p-6">
+  <a routerLink="/vault" class="back-link">← Back to folders</a>
+
+  <div class="page-header">
+    <h1>{{ folder?.name || "Folder" }}</h1>
+  </div>
+
+  <div *ngIf="loading" class="empty-state">Loading...</div>
+
+  <ng-container *ngIf="!loading">
+    <section class="section">
+      <div class="section-header">
+        <h2>Documents</h2>
+        <label class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 relative">
+          {{ uploading ? "Uploading..." : "+ Upload document" }}
+          <input type="file" (change)="onFileSelected($event)" [disabled]="uploading" hidden />
+        </label>
+      </div>
+
+      <div class="drop-zone" appDropZone (filesDropped)="onFilesDropped($event)">
+        Drag &amp; drop a file here, or use the upload button above.
+      </div>
+
+      <input
+        class="search-box"
+        type="text"
+        placeholder="Search documents by file name..."
+        [(ngModel)]="documentSearch"
+        (ngModelChange)="onDocumentSearchChange()"
+      />
+
+      <div class="border border-border rounded shadow-sm backdrop-blur-md transition-all bg-[color-mix(in_srgb,var(--color-surface)_88%,transparent)]" *ngIf="documents.length === 0">
+        <p class="empty-inline">No documents found.</p>
+      </div>
+
+      <div class="card list-item" *ngFor="let doc of documents" [appFileTypeColor]="doc.originalFileName">
+        <div class="item-main">
+          <span class="item-icon">📄</span>
+          <div>
+            <div class="item-title">{{ doc.originalFileName }}</div>
+            <div class="item-meta">{{ doc.sizeBytes | fileSize }} · SHA-256: {{ doc.fileHash.slice(0, 16) }}...</div>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="viewDocument(doc)">View</button>
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="downloadDocument(doc)">Download</button>
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="renameDocument(doc)">Rename</button>
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="openShareModal(doc)">Share</button>
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="deleteDocument(doc)">Delete</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2>Credential Records</h2>
+        <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100" (click)="showCredentialForm = !showCredentialForm">
+          {{ showCredentialForm ? "Cancel" : "+ Add credential" }}
+        </button>
+      </div>
+
+      <form *ngIf="showCredentialForm" class="card credential-form" [formGroup]="credentialForm" (ngSubmit)="saveCredential()">
+        <div class="field">
+          <label>Title</label>
+          <input type="text" formControlName="title" placeholder="e.g. Gmail account" />
+          <p class="field-error" *ngIf="credentialForm.get('title')?.invalid && credentialForm.get('title')?.touched">
+            Title is required.
+          </p>
+        </div>
+        <div class="field">
+          <label>Username</label>
+          <input type="text" formControlName="accountUsername" />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" formControlName="password" />
+          <p class="field-error" *ngIf="credentialForm.get('password')?.invalid && credentialForm.get('password')?.touched">
+            Password is required.
+          </p>
+        </div>
+        <div class="field">
+          <label>URL (optional)</label>
+          <input type="text" formControlName="url" />
+        </div>
+        <div class="field">
+          <label>Notes (optional)</label>
+          <textarea formControlName="notes" rows="2"></textarea>
+        </div>
+
+        <div class="custom-fields" formArrayName="customFields">
+          <label>Custom fields</label>
+          <div class="custom-field-row" *ngFor="let field of customFields.controls; let i = index" [formGroupName]="i">
+            <input type="text" formControlName="label" placeholder="Field name (e.g. PIN, Email)" />
+            <input type="text" formControlName="value" placeholder="Value" />
+            <button type="button" class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="removeCustomField(i)">Remove</button>
+          </div>
+          <button type="button" class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="addCustomField()">+ Add custom field</button>
+        </div>
+
+        <p class="field-error" *ngIf="credentialForm.errors?.['usernameOrEmailRequired'] && credentialForm.touched">
+          Provide a username, or add a custom field named "Email".
+        </p>
+
+        <div class="form-actions">
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100" type="submit" [disabled]="savingCredential">
+            {{ savingCredential ? "Saving..." : "Save credential" }}
+          </button>
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-surface-alt text-ink border-border hover:bg-primary-soft hover:border-primary" type="button" (click)="showCredentialForm = false">Cancel</button>
+        </div>
+      </form>
+
+      <div class="border border-border rounded shadow-sm backdrop-blur-md transition-all bg-[color-mix(in_srgb,var(--color-surface)_88%,transparent)]" *ngIf="credentials.length === 0">
+        <p class="empty-inline">No credential records in this folder yet.</p>
+      </div>
+
+      <app-credential-card
+        *ngFor="let cred of credentials"
+        [credential]="cred"
+        [revealed]="isRevealed(cred.id)"
+        [revealedValue]="revealedValueFor(cred.id)"
+        (toggleReveal)="onToggleReveal($event)"
+        (deleteCredential)="deleteCredential($event)"
+      ></app-credential-card>
+    </section>
+  </ng-container>
+
+  <!-- Share link modal (out-of-BRD-scope feature, kept as-is) -->
+  <div class="modal-backdrop" *ngIf="shareModalDoc" (click)="closeShareModal()">
+    <div class="card modal" (click)="$event.stopPropagation()">
+      <h3>Share "{{ shareModalDoc.originalFileName }}"</h3>
+      <p class="modal-subtitle">Anyone with this link can download the file without logging in, until it expires.</p>
+
+      <div class="field" *ngIf="!generatedShareUrl">
+        <label>Link expires in (hours)</label>
+        <input type="number" [(ngModel)]="shareExpiryHours" min="1" max="720" />
+      </div>
+
+      <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 w-full mt-1.5" *ngIf="!generatedShareUrl" (click)="generateShareLink()" [disabled]="generatingLink">
+        {{ generatingLink ? "Generating..." : "Generate share link" }}
+      </button>
+
+      <div *ngIf="generatedShareUrl" class="share-result">
+        <input type="text" readonly [value]="generatedShareUrl" />
+        <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-surface-alt text-ink border-border hover:bg-primary-soft hover:border-primary" (click)="copyShareLink()">Copy</button>
+      </div>
+
+      <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink w-full mt-1.5" (click)="closeShareModal()">Close</button>
+    </div>
+  </div>
+</div>
