@@ -1,0 +1,53 @@
+<div class="max-w-[1080px] mx-auto p-6">
+  <div class="page-header">
+    <h1>Search</h1>
+  </div>
+
+  <form class="search-form" (ngSubmit)="onSubmit()">
+    <input
+      class="search-box"
+      type="text"
+      placeholder="Search your documents and credentials..."
+      [(ngModel)]="query"
+      name="q"
+    />
+    <button type="submit" class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100">Search</button>
+  </form>
+
+  <div *ngIf="!searched" class="empty-state">Type a term and press Search - it stays in the URL, so results are shareable and survive a refresh.</div>
+  <div *ngIf="loading" class="empty-state">Searching...</div>
+
+  <ng-container *ngIf="searched && !loading">
+    <section class="section" *ngIf="documents.length > 0">
+      <h2>Documents</h2>
+      <div class="card list-item" *ngFor="let doc of documents">
+        <div class="item-main">
+          <span class="item-icon">📄</span>
+          <div>
+            <div class="item-title">{{ doc.originalFileName }}</div>
+            <div class="item-meta">{{ doc.sizeBytes | fileSize }}</div>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="viewDocument(doc)">View</button>
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="downloadDocument(doc)">Download</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" *ngIf="credentials.length > 0">
+      <h2>Credentials</h2>
+      <app-credential-card
+        *ngFor="let cred of credentials"
+        [credential]="cred"
+        [revealed]="isRevealed(cred.id)"
+        [revealedValue]="revealedValueFor(cred.id)"
+        (toggleReveal)="onToggleReveal($event)"
+      ></app-credential-card>
+    </section>
+
+    <div class="border border-border rounded shadow-sm backdrop-blur-md transition-all bg-[color-mix(in_srgb,var(--color-surface)_88%,transparent)]" *ngIf="documents.length === 0 && credentials.length === 0">
+      <p class="empty-inline">No results for "{{ query }}".</p>
+    </div>
+  </ng-container>
+</div>

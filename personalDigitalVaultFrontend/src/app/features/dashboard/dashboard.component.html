@@ -1,0 +1,59 @@
+<div class="max-w-[1080px] mx-auto p-6">
+  <div class="feedback-banner card" *ngIf="myFeedback">
+    <div class="feedback-banner-header">
+      <span class="feedback-stars">
+        <span *ngFor="let n of [1,2,3,4,5]" [class.filled]="n <= myFeedback.rating">★</span>
+      </span>
+      <span class="feedback-label">Your feedback</span>
+    </div>
+    <p class="feedback-comment" *ngIf="myFeedback.comment">{{ myFeedback.comment }}</p>
+  </div>
+
+  <div class="page-header">
+    <div>
+      <h1>Your Folders</h1>
+      <p class="subtitle">Organize your documents and credential records into folders.</p>
+    </div>
+    <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100" (click)="showCreateForm = !showCreateForm">+ New folder</button>
+  </div>
+
+  <form *ngIf="showCreateForm" class="card create-form" (ngSubmit)="createFolder()">
+    <input type="text" [(ngModel)]="newFolderName" name="newFolderName" placeholder="Folder name" autofocus />
+    <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100" type="submit" [disabled]="creating">{{ creating ? "Creating..." : "Create" }}</button>
+    <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-surface-alt text-ink border-border hover:bg-primary-soft hover:border-primary" type="button" (click)="showCreateForm = false">Cancel</button>
+  </form>
+
+  <div *ngIf="loading" class="empty-state">Loading folders...</div>
+
+  <div *ngIf="!loading && folders.length === 0" class="empty-state card">
+    <p>You don't have any folders yet.</p>
+    <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100" (click)="showCreateForm = true">Create your first folder</button>
+  </div>
+
+  <div class="folder-grid" *ngIf="!loading && folders.length > 0">
+    <div class="card folder-card" *ngFor="let folder of folders">
+      <div *ngIf="renamingId !== folder.id">
+        <a class="folder-link" [routerLink]="['/vault/folders', folder.id]">
+          <span class="folder-icon">📁</span>
+          <span class="folder-name">{{ folder.name }}</span>
+        </a>
+        <p class="folder-meta">
+          {{ folder.documentCount }} document{{ folder.documentCount === 1 ? "" : "s" }} ·
+          {{ folder.credentialCount }} credential{{ folder.credentialCount === 1 ? "" : "s" }}
+        </p>
+        <div class="folder-actions">
+          <button class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full border border-transparent text-xs font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="startRename(folder)">Rename</button>
+          <button class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full border border-transparent text-xs font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="deleteFolder(folder)">Delete</button>
+        </div>
+      </div>
+
+      <div *ngIf="renamingId === folder.id" class="rename-form">
+        <input type="text" [(ngModel)]="renameValue" name="renameValue" />
+        <div>
+          <button class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full border border-transparent text-xs font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark" (click)="confirmRename(folder)">Save</button>
+          <button class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full border border-transparent text-xs font-bold tracking-wide transition-all duration-150 active:scale-95 bg-surface-alt text-ink border-border hover:bg-primary-soft hover:border-primary" (click)="renamingId = null">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

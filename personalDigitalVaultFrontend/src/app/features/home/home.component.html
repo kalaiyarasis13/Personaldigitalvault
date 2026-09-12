@@ -1,0 +1,82 @@
+<div class="home-page">
+  <button class="theme-toggle theme-toggle-floating" (click)="theme.toggle()" [attr.aria-label]="'Switch to ' + (theme.theme() === 'dark' ? 'light' : 'dark') + ' mode'">
+    {{ theme.theme() === "dark" ? "☀️" : "🌙" }}
+  </button>
+
+  <nav class="home-nav">
+    <div class="home-nav-inner">
+      <span class="home-brand">🔐 Personal Digital Vault</span>
+      <div class="home-nav-links" *ngIf="!auth.isAuthenticated()">
+        <a routerLink="/login">Log in</a>
+        <a routerLink="/register" class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100">Get Started</a>
+      </div>
+      <div class="home-nav-links" *ngIf="auth.isAuthenticated()">
+        <a routerLink="/vault" class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100">Go to Dashboard</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">Welcome to your vault</p>
+      <h1>Your digital life,<br />locked down tight.</h1>
+      <p class="hero-description">
+        Store your private documents and passwords in one encrypted place. AES-256 encryption,
+        SHA-256 integrity checks, and JWT-secured access — built for people who take their
+        privacy seriously.
+      </p>
+      <div class="hero-actions" *ngIf="!auth.isAuthenticated()">
+        <a
+  routerLink="/register"
+  class="hero-primary-btn inline-flex items-center justify-center gap-1.5 px-7 py-3.5 rounded-full border text-[15px] font-bold tracking-wide transition-all duration-150 active:scale-95 no-underline"
+>
+  Create free account
+</a>
+        <a routerLink="/login" class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-surface-alt text-ink border-border hover:bg-primary-soft hover:border-primary px-7 py-3.5 text-[15px] no-underline">Log in</a>
+      </div>
+      <div class="hero-actions" *ngIf="auth.isAuthenticated()">
+        <a routerLink="/vault" class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 px-7 py-3.5 text-[15px] no-underline">Go to your Dashboard</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="vault-glow">
+        <span class="vault-icon">🔐</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <p class="features-eyebrow">Built for security</p>
+    <p class="features-description">
+      Every file and credential you store passes through the same protections — no shortcuts,
+      no exceptions. Here's what's keeping your data safe.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🗂️</span>
+        <h3>Organized Folders</h3>
+        <p>Structure your documents and credentials into folders that make sense to you.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3>AES-256 Encryption</h3>
+        <p>Files and passwords are encrypted before they ever touch the disk.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔑</span>
+        <h3>Credential Vault</h3>
+        <p>Passwords stay masked by default — reveal them only when you need to.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">✅</span>
+        <h3>Integrity Checks</h3>
+        <p>SHA-256 hashing confirms your files haven't been tampered with.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="home-footer">
+    <p>Personal Digital Vault — your documents and credentials, secured.</p>
+  </footer>
+</div>

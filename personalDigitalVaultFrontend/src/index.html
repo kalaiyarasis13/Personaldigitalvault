@@ -1,13 +1,26 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>PersonalDigitalVault</title>
-    <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  </head>
-  <body>
-    <app-root></app-root>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <title>Personal Digital Vault</title>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    // Applies the saved theme before Angular renders, to avoid a flash of the wrong theme.
+    (function () {
+      try {
+        var stored = localStorage.getItem("pdv_theme");
+        var prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+        var mode = stored === "dark" || stored === "light" ? stored : (prefersLight ? "light" : "dark");
+        if (mode === "light") document.documentElement.classList.add("light");
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <app-root></app-root>
+</body>
 </html>
