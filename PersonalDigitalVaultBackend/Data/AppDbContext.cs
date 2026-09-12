@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PersonalDigitalVaultBackend.Models;
 
+
 namespace PersonalDigitalVaultBackend.Data
 {
     public class AppDbContext : DbContext
@@ -10,7 +11,7 @@ namespace PersonalDigitalVaultBackend.Data
         public DbSet<SharedLink> SharedLinks => Set<SharedLink>();
         public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
         public DbSet<FolderCategory> Folders => Set<FolderCategory>();
-
+        public DbSet<Documents> Documents => Set<Documents>();
         public DbSet<Feedback> Feedbacks => Set<Feedback>();
         public DbSet<CredentialRecord> Credentials => Set<CredentialRecord>();
         public DbSet<ApplicationUser> Users => Set<ApplicationUser>();
@@ -19,6 +20,19 @@ namespace PersonalDigitalVaultBackend.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Documents>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                      .WithMany(u => u.Documents)
+                      .HasForeignKey(d => d.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.Folder)
+                      .WithMany(f => f.Documents)
+                      .HasForeignKey(d => d.FolderId)
+                      .OnDelete(DeleteBehavior.Restrict); // avoids "multiple cascade paths" - app code unlinks documents before a folder is deleted
+            });
 
             modelBuilder.Entity<SharedLink>(entity =>
             {

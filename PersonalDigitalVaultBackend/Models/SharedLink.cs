@@ -8,7 +8,7 @@ public class SharedLink
     public string Token { get; set; } = Guid.NewGuid().ToString("N");
 
     public int DocumentId { get; set; }
-    public Document? Document { get; set; }
+    public Documents? Document { get; set; }
 
     public int UserId { get; set; }
     public ApplicationUser? User { get; set; }
