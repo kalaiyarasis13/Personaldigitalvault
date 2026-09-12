@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { API_BASE_URL } from "./environment";
 import { ApiResponse } from "../models/api-response.model";
-import { CredentialListItem, CredentialReveal } from "../models/credential.model";
+import { CredentialListItem, CredentialReveal } from "../models/Credential.model";
 
 @Injectable({ providedIn: "root" })
 export class CredentialService {

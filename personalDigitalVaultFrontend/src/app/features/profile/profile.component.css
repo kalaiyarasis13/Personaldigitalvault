@@ -1,0 +1,8 @@
+.page h1 {
+  font-size: 32px; font-weight: 800; margin: 0 0 22px; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--color-text), var(--color-primary));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.section { padding: 24px; margin-bottom: 20px; max-width: 480px; }
+.section h2 { font-size: 15px; margin: 0 0 16px; }
+.section input:disabled { background: var(--color-surface-alt); color: var(--color-text-muted); }

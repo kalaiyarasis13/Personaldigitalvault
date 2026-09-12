@@ -1,0 +1,16 @@
+.search-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.search-form .search-box {
+  flex: 1;
+}
+.section {
+  margin-bottom: 24px;
+}
+.section h2 {
+  font-size: 1rem;
+  color: #475569;
+  margin-bottom: 8px;
+}

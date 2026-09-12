@@ -2,19 +2,19 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { CredentialService } from "../../core/services/credential.service";
+import { CredentialService } from "../../core/services/Credential.service";
 import { ToastService } from "../../core/services/toast.service";
 import { VaultStateService } from "../../core/services/vault-state.service";
-import { CredentialListItem } from "../../core/models/credential.model";
-import { CredentialCardComponent } from "../../shared/components/credential-card/credential-card.component";
+import { CredentialListItem } from "../../core/models/Credential.model";
+import { CredentialCardComponent } from "../../shared/components/Credential-card/credential-card.component";
 import { usernameOrEmailRequired } from "../../shared/validators/username-or-email-required.validator";
 
 @Component({
   selector: "app-credentials",
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, CredentialCardComponent],
-  templateUrl: "./credentials.component.html",
-  styleUrl: "./credentials.component.css"
+  templateUrl: "./Credentials.component.html",
+  styleUrl: "./Credentials.component.css"
 })
 export class CredentialsComponent implements OnInit {
   credentials: CredentialListItem[] = [];

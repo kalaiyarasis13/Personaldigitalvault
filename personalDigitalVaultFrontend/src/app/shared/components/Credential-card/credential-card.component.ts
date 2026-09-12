@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MaskSecretPipe } from "../../pipes/mask-secret.pipe";
-import { CredentialListItem } from "../../../core/models/credential.model";
+import { CredentialListItem } from "../../../core/models/Credential.model";
 
 /**
  * Dumb child component - BRD 4.1. Owns no API calls and no reveal state of
