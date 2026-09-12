@@ -1,0 +1,21 @@
+<nav class="navbar" *ngIf="auth.isAuthenticated()">
+    <div class="navbar-inner">
+      <a class="brand" routerLink="/vault">🔐 Personal Digital Vault</a>
+      <div class="links">
+        <a routerLink="/vault" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Folders</a>
+        <a routerLink="/vault/credentials" routerLinkActive="active">Credentials</a>
+        <a routerLink="/vault/search" routerLinkActive="active">Search</a>
+        <a routerLink="/billing" routerLinkActive="active">Billing</a>
+        <a routerLink="/vault/profile" routerLinkActive="active">Profile</a>
+        <a *ngIf="auth.isAdmin()" routerLink="/admin" routerLinkActive="active">Admin</a>
+      </div>
+      <div class="user-area">
+        <button class="theme-toggle" (click)="theme.toggle()" [attr.aria-label]="'Switch to ' + (theme.theme() === 'dark' ? 'light' : 'dark') + ' mode'">
+          {{ theme.theme() === "dark" ? "☀️" : "🌙" }}
+        </button>
+        <span class="username">{{ auth.currentUser()?.username }}</span>
+        <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="logout()">Log out</button>
+      </div>
+    </div>
+  </nav>
+  
