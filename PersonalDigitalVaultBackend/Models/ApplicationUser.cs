@@ -1,4 +1,4 @@
-﻿using System.Reflection.Metadata;
+﻿
 
 namespace PersonalDigitalVaultBackend.Models
 {
@@ -30,7 +30,7 @@ namespace PersonalDigitalVaultBackend.Models
         public StoragePlan Plan { get; set; } = StoragePlan.Free;
 
         public ICollection<FolderCategory> Folders { get; set; } = new List<FolderCategory>();
-        public ICollection<Document> Documents { get; set; } = new List<Document>();
+        public ICollection<Documents> Documents { get; set; } = new List<Documents>();
         public ICollection<CredentialRecord> Credentials { get; set; } = new List<CredentialRecord>();
         public ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
         public ICollection<SharedLink> SharedLinks { get; set; } = new List<SharedLink>();

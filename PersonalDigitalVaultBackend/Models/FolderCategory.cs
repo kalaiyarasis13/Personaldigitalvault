@@ -1,4 +1,4 @@
-﻿using System.Reflection.Metadata;
+﻿
 
 namespace PersonalDigitalVaultBackend.Models
 {
@@ -15,7 +15,7 @@ namespace PersonalDigitalVaultBackend.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<FolderCategory> SubFolders { get; set; } = new List<FolderCategory>();
-        public ICollection<Document> Documents { get; set; } = new List<Document>();
+        public ICollection<Documents> Documents { get; set; } = new List<Documents>();
         public ICollection<CredentialRecord> Credentials { get; set; } = new List<CredentialRecord>();
     }
 }

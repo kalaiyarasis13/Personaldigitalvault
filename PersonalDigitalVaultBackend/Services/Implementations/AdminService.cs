@@ -1,4 +1,5 @@
 ﻿using PersonalDigitalVaultBackend.DTOs.ResponseDtos.Admin;
+using PersonalDigitalVaultBackend.Models;
 using PersonalDigitalVaultBackend.Repositories.Interfaces;
 using PersonalDigitalVaultBackend.Services.Interface;
 
