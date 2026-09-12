@@ -1,0 +1,194 @@
+<div class="max-w-[1080px] mx-auto p-6">
+    <h1>Billing &amp; Storage</h1>
+  
+    <div *ngIf="!loading && status" class="card plan-card">
+      <div class="plan-header">
+        <div>
+          <div class="plan-label">Current plan</div>
+          <div class="plan-name">{{ status.currentPlan }}</div>
+        </div>
+        <button
+          class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100"
+          *ngIf="status.currentPlan !== 'Premium'"
+          (click)="upgrade()"
+        >
+          Upgrade to Premium – $4.99/mo
+        </button>
+      </div>
+  
+      <div class="usage">
+        <div class="usage-bar"><div class="usage-fill" [style.width.%]="usagePercent()"></div></div>
+        <div class="usage-text">{{ formatBytes(status.storageUsedBytes) }} of {{ formatBytes(status.storageLimitBytes) }} used</div>
+      </div>
+    </div>
+  
+    <h2 class="section-title">Payment history</h2>
+    <div class="border border-border rounded shadow-sm backdrop-blur-md transition-all bg-[color-mix(in_srgb,var(--color-surface)_88%,transparent)]" *ngIf="history.length === 0">
+      <p class="empty-inline">No transactions yet.</p>
+    </div>
+    <table class="card history-table" *ngIf="history.length > 0">
+      <thead><tr><th>Date</th><th>Plan</th><th>Amount</th><th>Status</th><th>Reference</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let item of history">
+          <td>{{ item.createdAt | date: "medium" }}</td>
+          <td>{{ item.planName }}</td>
+          <td>{{ (item.amountCents / 100) | currency: item.currency }}</td>
+          <td><span class="badge" [class.active]="item.status === 'Success'" [class.inactive]="item.status !== 'Success'">{{ item.status }}</span></td>
+          <td class="mono">{{ item.mockGatewayReference }}</td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <!-- Checkout simulation modal -->
+    <div class="modal-backdrop" *ngIf="stage !== 'idle'">
+      <div class="card checkout-modal">
+  
+        <div class="checkout-stage" *ngIf="stage === 'processing'">
+          <div class="spinner"></div>
+          <h3>Processing your payment...</h3>
+          <p class="stage-subtitle">Please don't close this window.</p>
+        </div>
+  
+        <div class="checkout-stage" *ngIf="stage === 'success'">
+          <div class="success-check">✓</div>
+          <h3>Payment successful!</h3>
+          <p class="stage-subtitle">You're now on the Premium plan.</p>
+        </div>
+  
+        <div class="checkout-stage feedback-stage" *ngIf="stage === 'feedback'">
+          <h3>How was your upgrade experience?</h3>
+          <p class="stage-subtitle">Your feedback helps us improve.</p>
+  
+          <div class="star-row">
+            <button
+              type="button"
+              class="star"
+              *ngFor="let n of [1, 2, 3, 4, 5]"
+              [class.filled]="n <= feedbackRating"
+              (click)="setRating(n)"
+            >★</button>
+          </div>
+  
+          <textarea
+            class="feedback-textarea"
+            rows="3"
+            placeholder="Any comments? (optional)"
+            [(ngModel)]="feedbackComment"
+          ></textarea>
+  
+          <div class="feedback-actions">
+            <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 w-full mt-1.5" (click)="submitFeedback()" [disabled]="feedbackRating < 1 || submittingFeedback">
+              {{ submittingFeedback ? "Submitting..." : "Submit feedback" }}
+            </button>
+            <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink w-full mt-1.5" (click)="skipFeedback()">Skip</button>
+          </div>
+        </div>
+  
+        <div class="checkout-stage" *ngIf="stage === 'done'">
+          <div class="success-check">✓</div>
+          <h3>Thank you!</h3>
+          <p class="stage-subtitle">Enjoy your Premium storage.</p>
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 w-full mt-1.5" (click)="closeModal()">Done</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+  
+  <div class="max-w-[1080px] mx-auto p-6">
+    <h1>Billing &amp; Storage</h1>
+  
+    <div *ngIf="!loading && status" class="card plan-card">
+      <div class="plan-header">
+        <div>
+          <div class="plan-label">Current plan</div>
+          <div class="plan-name">{{ status.currentPlan }}</div>
+        </div>
+        <button
+          class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100"
+          *ngIf="status.currentPlan !== 'Premium'"
+          (click)="upgrade()"
+        >
+          Upgrade to Premium – $4.99/mo
+        </button>
+      </div>
+  
+      <div class="usage">
+        <div class="usage-bar"><div class="usage-fill" [style.width.%]="usagePercent()"></div></div>
+        <div class="usage-text">{{ formatBytes(status.storageUsedBytes) }} of {{ formatBytes(status.storageLimitBytes) }} used</div>
+      </div>
+    </div>
+  
+    <h2 class="section-title">Payment history</h2>
+    <div class="border border-border rounded shadow-sm backdrop-blur-md transition-all bg-[color-mix(in_srgb,var(--color-surface)_88%,transparent)]" *ngIf="history.length === 0">
+      <p class="empty-inline">No transactions yet.</p>
+    </div>
+    <table class="card history-table" *ngIf="history.length > 0">
+      <thead><tr><th>Date</th><th>Plan</th><th>Amount</th><th>Status</th><th>Reference</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let item of history">
+          <td>{{ item.createdAt | date: "medium" }}</td>
+          <td>{{ item.planName }}</td>
+          <td>{{ (item.amountCents / 100) | currency: item.currency }}</td>
+          <td><span class="badge" [class.active]="item.status === 'Success'" [class.inactive]="item.status !== 'Success'">{{ item.status }}</span></td>
+          <td class="mono">{{ item.mockGatewayReference }}</td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <!-- Checkout simulation modal -->
+    <div class="modal-backdrop" *ngIf="stage !== 'idle'">
+      <div class="card checkout-modal">
+  
+        <div class="checkout-stage" *ngIf="stage === 'processing'">
+          <div class="spinner"></div>
+          <h3>Processing your payment...</h3>
+          <p class="stage-subtitle">Please don't close this window.</p>
+        </div>
+  
+        <div class="checkout-stage" *ngIf="stage === 'success'">
+          <div class="success-check">✓</div>
+          <h3>Payment successful!</h3>
+          <p class="stage-subtitle">You're now on the Premium plan.</p>
+        </div>
+  
+        <div class="checkout-stage feedback-stage" *ngIf="stage === 'feedback'">
+          <h3>How was your upgrade experience?</h3>
+          <p class="stage-subtitle">Your feedback helps us improve.</p>
+  
+          <div class="star-row">
+            <button
+              type="button"
+              class="star"
+              *ngFor="let n of [1, 2, 3, 4, 5]"
+              [class.filled]="n <= feedbackRating"
+              (click)="setRating(n)"
+            >★</button>
+          </div>
+  
+          <textarea
+            class="feedback-textarea"
+            rows="3"
+            placeholder="Any comments? (optional)"
+            [(ngModel)]="feedbackComment"
+          ></textarea>
+  
+          <div class="feedback-actions">
+            <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 w-full mt-1.5" (click)="submitFeedback()" [disabled]="feedbackRating < 1 || submittingFeedback">
+              {{ submittingFeedback ? "Submitting..." : "Submit feedback" }}
+            </button>
+            <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink w-full mt-1.5" (click)="skipFeedback()">Skip</button>
+          </div>
+        </div>
+  
+        <div class="checkout-stage" *ngIf="stage === 'done'">
+          <div class="success-check">✓</div>
+          <h3>Thank you!</h3>
+          <p class="stage-subtitle">Enjoy your Premium storage.</p>
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 w-full mt-1.5" (click)="closeModal()">Done</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+  
