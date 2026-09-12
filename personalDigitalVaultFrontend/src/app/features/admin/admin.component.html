@@ -1,0 +1,79 @@
+<div class="max-w-[1080px] mx-auto p-6">
+  <h1>Administrator Dashboard</h1>
+  <p class="subtitle">Account management and usage overview. Decrypted file/credential content is never shown here.</p>
+
+  <div class="stats-grid" *ngIf="stats">
+    <div class="card stat-card">
+      <div class="stat-value">{{ stats.totalUsers }}</div>
+      <div class="stat-label">Total users</div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-value">{{ stats.activeUsers }}</div>
+      <div class="stat-label">Active users</div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-value">{{ stats.totalUploads }}</div>
+      <div class="stat-label">Total uploads</div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-value">{{ formatBytes(stats.totalStorageBytes) }}</div>
+      <div class="stat-label">Storage used</div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-value">{{ stats.totalCredentialRecords }}</div>
+      <div class="stat-label">Credential records</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Users</h2>
+  <div *ngIf="loading" class="empty-state">Loading...</div>
+
+  <table class="card user-table" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Username</th><th>Email</th><th>Role</th><th>Status</th>
+        <th>Folders</th><th>Documents</th><th>Joined</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>
+          <span class="badge" [class.active]="user.isActive" [class.inactive]="!user.isActive">
+            {{ user.isActive ? "Active" : "Disabled" }}
+          </span>
+        </td>
+        <td>{{ user.folderCount }}</td>
+        <td>{{ user.documentCount }}</td>
+        <td>{{ user.createdAt | date: "mediumDate" }}</td>
+        <td class="row-actions" *ngIf="user.role !== 'Administrator'">
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="toggleStatus(user)">
+            {{ user.isActive ? "Disable" : "Enable" }}
+          </button>
+          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink" (click)="deleteUser(user)">Delete</button>
+        </td>
+        <td *ngIf="user.role === 'Administrator'"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="section-title feedback-section-title">Customer Feedback</h2>
+  <div class="border border-border rounded shadow-sm backdrop-blur-md transition-all bg-[color-mix(in_srgb,var(--color-surface)_88%,transparent)]" *ngIf="!loading && feedbacks.length === 0">
+    <p class="empty-inline">No feedback submitted yet.</p>
+  </div>
+
+  <div class="card list-item" *ngFor="let fb of feedbacks">
+    <div class="feedback-item-main">
+      <span class="feedback-stars">
+        <span *ngFor="let n of [1,2,3,4,5]" [class.filled]="n <= fb.rating">★</span>
+      </span>
+      <div>
+        <div class="item-title">{{ fb.username }}</div>
+        <p class="feedback-comment" *ngIf="fb.comment">{{ fb.comment }}</p>
+      </div>
+    </div>
+    <div class="feedback-date">{{ fb.createdAt | date: "mediumDate" }}</div>
+  </div>
+</div>
