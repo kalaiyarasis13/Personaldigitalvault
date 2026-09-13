@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -30,7 +30,8 @@ export class CredentialsComponent implements OnInit {
     private credentialService: CredentialService,
     private toast: ToastService,
     private fb: FormBuilder,
-    public vaultState: VaultStateService
+    public vaultState: VaultStateService,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group(
       {
@@ -65,10 +66,20 @@ export class CredentialsComponent implements OnInit {
   }
 
   load() {
-    this.loading = true;
-    this.credentialService.getAll(null, this.search || undefined).subscribe({
-      next: (res) => { this.credentials = res.data ?? []; this.loading = false; },
-      error: () => (this.loading = false)
+  this.loading = true;
+
+  this.credentialService
+    .getAll(null, this.search || undefined)
+    .subscribe({
+      next: (res) => {
+        this.credentials = res.data ?? [];
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 

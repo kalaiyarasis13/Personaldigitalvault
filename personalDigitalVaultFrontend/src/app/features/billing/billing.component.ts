@@ -61,36 +61,53 @@ export class BillingComponent implements OnInit {
 }
 
   upgrade() {
-    this.stage = "processing";
+  this.stage = "processing";
+  this.cdr.detectChanges();
 
-    // Brief simulated processing delay so the checkout feels like a real payment flow.
-    setTimeout(() => {
-      this.paymentService.checkout("Premium").subscribe({
-        next: () => {
-          this.stage = "success";
-          this.load();
-          setTimeout(() => (this.stage = "feedback"), 1100);
-        },
-        error: () => (this.stage = "idle")
-      });
-    }, 1500);
-  }
+  setTimeout(() => {
+    this.paymentService.checkout("Premium").subscribe({
+      next: () => {
+        this.stage = "success";
+        this.load();
+        this.cdr.detectChanges();
+
+        setTimeout(() => {
+          this.stage = "feedback";
+          this.cdr.detectChanges();
+        }, 1100);
+      },
+      error: () => {
+        this.stage = "idle";
+        this.cdr.detectChanges();
+      }
+    });
+  }, 1500);
+}
 
   setRating(value: number) {
     this.feedbackRating = value;
   }
 
   submitFeedback() {
-    if (this.feedbackRating < 1) return;
-    this.submittingFeedback = true;
-    this.feedbackService.submit(this.feedbackRating, this.feedbackComment).subscribe({
+  if (this.feedbackRating < 1) return;
+
+  this.submittingFeedback = true;
+  this.cdr.detectChanges();
+
+  this.feedbackService
+    .submit(this.feedbackRating, this.feedbackComment)
+    .subscribe({
       next: () => {
         this.submittingFeedback = false;
         this.stage = "done";
+        this.cdr.detectChanges();
       },
-      error: () => (this.submittingFeedback = false)
+      error: () => {
+        this.submittingFeedback = false;
+        this.cdr.detectChanges();
+      }
     });
-  }
+}
 
   skipFeedback() {
     this.stage = "done";

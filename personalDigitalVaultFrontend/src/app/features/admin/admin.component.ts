@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AdminService } from "../../core/services/admin.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -22,20 +22,47 @@ export class AdminComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private toast: ToastService,
-    private feedbackService: FeedbackService
+    private feedbackService: FeedbackService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() { this.load(); }
 
   load() {
-    this.loading = true;
-    this.adminService.getDashboard().subscribe((res) => (this.stats = res.data ?? null));
-    this.adminService.getUsers().subscribe({
-      next: (res) => { this.users = res.data ?? []; this.loading = false; },
-      error: () => (this.loading = false)
-    });
-    this.feedbackService.getAllForAdmin().subscribe((res) => (this.feedbacks = res.data ?? []));
-  }
+  this.loading = true;
+
+  this.adminService.getDashboard().subscribe({
+    next: (res) => {
+      this.stats = res.data ?? null;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.cdr.detectChanges();
+    }
+  });
+
+  this.adminService.getUsers().subscribe({
+    next: (res) => {
+      this.users = res.data ?? [];
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+
+  this.feedbackService.getAllForAdmin().subscribe({
+    next: (res) => {
+      this.feedbacks = res.data ?? [];
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   formatBytes(bytes: number): string {
     if (bytes < 1024) return `${bytes} B`;
