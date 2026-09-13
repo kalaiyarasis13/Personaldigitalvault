@@ -1,0 +1,47 @@
+<div class="max-w-[1080px] mx-auto p-6">
+  <h1>Your Profile</h1>
+
+  <div class="card section">
+    <h2>Account details</h2>
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" [value]="auth.currentUser()?.username" disabled />
+      </div>
+      <div class="field">
+        <label>Full name</label>
+        <input type="text" formControlName="fullName" />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" formControlName="email" />
+        <span class="error" *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.invalid">
+          Enter a valid email.
+        </span>
+      </div>
+      <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100" type="submit" [disabled]="savingProfile">
+        {{ savingProfile ? "Saving..." : "Save changes" }}
+      </button>
+    </form>
+  </div>
+
+  <div class="card section">
+    <h2>Change password</h2>
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <div class="field">
+        <label>Current password</label>
+        <input type="password" formControlName="currentPassword" />
+      </div>
+      <div class="field">
+        <label>New password</label>
+        <input type="password" formControlName="newPassword" />
+        <span class="error" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.invalid">
+          Minimum 8 characters.
+        </span>
+      </div>
+      <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100" type="submit" [disabled]="savingPassword">
+        {{ savingPassword ? "Updating..." : "Update password" }}
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<div class="toast-stack">
+    <div *ngFor="let m of toast.messages()" class="toast" [class]="m.type" (click)="toast.dismiss(m.id)">
+      {{ m.text }}
+    </div>
+  </div>
+  

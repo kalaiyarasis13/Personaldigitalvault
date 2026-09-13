@@ -1,0 +1,1 @@
+function l(){return r=>{let t=(r.get("accountUsername")?.value??"").trim(),a=(r.get("customFields")?.controls??[]).some(e=>(e.get("label")?.value??"").trim().toLowerCase()==="email"&&(e.get("value")?.value??"").trim());return t||a?null:{usernameOrEmailRequired:!0}}}export{l as a};

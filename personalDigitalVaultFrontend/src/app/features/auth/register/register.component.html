@@ -1,0 +1,44 @@
+<div class="auth-page">
+  <button class="theme-toggle theme-toggle-floating" (click)="theme.toggle()" [attr.aria-label]="'Switch to ' + (theme.theme() === 'dark' ? 'light' : 'dark') + ' mode'">
+    {{ theme.theme() === "dark" ? "☀️" : "🌙" }}
+  </button>
+  <form class="card auth-card" [formGroup]="form" (ngSubmit)="submit()">
+    <h1>Create your vault</h1>
+    <p class="subtitle">Register to start storing documents and credentials securely.</p>
+
+    <div class="field">
+      <label>Username</label>
+      <input type="text" formControlName="username" placeholder="jane_doe" />
+      <span class="error" *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
+        Minimum 3 characters.
+      </span>
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" formControlName="email" placeholder="jane@example.com" />
+      <span class="error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+        Enter a valid email.
+      </span>
+    </div>
+
+    <div class="field">
+      <label>Full name (optional)</label>
+      <input type="text" formControlName="fullName" placeholder="Jane Doe" />
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input type="password" formControlName="password" placeholder="At least 8 characters" />
+      <span class="error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+        Minimum 8 characters.
+      </span>
+    </div>
+
+    <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 w-full mt-1.5" type="submit" [disabled]="submitting">
+      {{ submitting ? "Creating account..." : "Create account" }}
+    </button>
+
+    <p class="switch-link">Already have an account? <a routerLink="/login">Log in</a></p>
+  </form>
+</div>
