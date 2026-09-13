@@ -11,10 +11,10 @@ namespace PersonalDigitalVaultBackend.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class PaymentController : ControllerBase
+    public class PaymentsController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
-        public PaymentController(IPaymentService paymentService) => _paymentService = paymentService;
+        public PaymentsController(IPaymentService paymentService) => _paymentService = paymentService;
 
 
         private int CurrentUserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

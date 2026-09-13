@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { PaymentService } from "../../core/services/payment.service";
@@ -28,16 +28,37 @@ export class BillingComponent implements OnInit {
   constructor(
     private paymentService: PaymentService,
     private feedbackService: FeedbackService,
-    private toast: ToastService
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() { this.load(); }
 
   load() {
-    this.loading = true;
-    this.paymentService.getBillingStatus().subscribe((res) => { this.status = res.data ?? null; this.loading = false; });
-    this.paymentService.getHistory().subscribe((res) => (this.history = res.data ?? []));
-  }
+  this.loading = true;
+
+  this.paymentService.getBillingStatus().subscribe({
+    next: (res) => {
+      this.status = res.data ?? null;
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+
+  this.paymentService.getHistory().subscribe({
+    next: (res) => {
+      this.history = res.data ?? [];
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   upgrade() {
     this.stage = "processing";

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -35,7 +35,8 @@ export class SearchComponent implements OnInit {
     private router: Router,
     private documentService: DocumentService,
     private credentialService: CredentialService,
-    public vaultState: VaultStateService
+    public vaultState: VaultStateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -58,14 +59,31 @@ export class SearchComponent implements OnInit {
   }
 
   private runSearch(q: string) {
-    this.loading = true;
-    this.searched = true;
-    this.documentService.getAll(undefined, q).subscribe({
-      next: (res) => { this.documents = res.data ?? []; this.loading = false; },
-      error: () => (this.loading = false)
-    });
-    this.credentialService.getAll(undefined, q).subscribe((res) => (this.credentials = res.data ?? []));
-  }
+  this.loading = true;
+  this.searched = true;
+
+  this.documentService.getAll(undefined, q).subscribe({
+    next: (res) => {
+      this.documents = res.data ?? [];
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+
+  this.credentialService.getAll(undefined, q).subscribe({
+    next: (res) => {
+      this.credentials = res.data ?? [];
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   onToggleReveal(id: number) {
     const wasRevealed = this.vaultState.isRevealed(id);

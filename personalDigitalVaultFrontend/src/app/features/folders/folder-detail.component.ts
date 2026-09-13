@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef,Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -60,7 +60,8 @@ export class FolderDetailComponent implements OnInit {
     private toast: ToastService,
     private sharingService: SharingService,
     private fb: FormBuilder,
-    public vaultState: VaultStateService
+    public vaultState: VaultStateService,
+    private cdr: ChangeDetectorRef
   ) {
     this.credentialForm = this.fb.group(
       {
@@ -93,16 +94,34 @@ export class FolderDetailComponent implements OnInit {
   }
 
   load() {
-    this.loading = true;
-    this.folderService.getAll().subscribe((res) => {
-      this.folder = (res.data ?? []).find((f) => f.id === this.folderId) ?? null;
+  this.loading = true;
+
+  this.folderService.getAll().subscribe((res) => {
+    this.folder =
+      (res.data ?? []).find((f) => f.id === this.folderId) ?? null;
+
+    this.cdr.detectChanges();
+  });
+
+  this.documentService
+    .getAll(this.folderId, this.documentSearch || undefined)
+    .subscribe((res) => {
+      this.documents = res.data ?? [];
+      this.cdr.detectChanges();
     });
-    this.documentService.getAll(this.folderId, this.documentSearch || undefined).subscribe((res) => (this.documents = res.data ?? []));
-    this.credentialService.getAll(this.folderId).subscribe({
-      next: (res) => { this.credentials = res.data ?? []; this.loading = false; },
-      error: () => (this.loading = false)
-    });
-  }
+
+  this.credentialService.getAll(this.folderId).subscribe({
+    next: (res) => {
+      this.credentials = res.data ?? [];
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   onDocumentSearchChange() {
     this.documentService.getAll(this.folderId, this.documentSearch || undefined).subscribe((res) => {
@@ -171,16 +190,25 @@ export class FolderDetailComponent implements OnInit {
   }
 
   generateShareLink() {
-    if (!this.shareModalDoc) return;
-    this.generatingLink = true;
-    this.sharingService.createLink(this.shareModalDoc.id, this.shareExpiryHours).subscribe({
+  if (!this.shareModalDoc) return;
+
+  this.generatingLink = true;
+  this.generatedShareUrl = null;
+
+  this.sharingService
+    .createLink(this.shareModalDoc.id, this.shareExpiryHours)
+    .subscribe({
       next: (res) => {
         this.generatingLink = false;
         this.generatedShareUrl = res.data?.shareUrl ?? null;
+        this.cdr.detectChanges();
       },
-      error: () => (this.generatingLink = false)
+      error: () => {
+        this.generatingLink = false;
+        this.cdr.detectChanges();
+      }
     });
-  }
+}
 
   copyShareLink() {
     if (!this.generatedShareUrl) return;

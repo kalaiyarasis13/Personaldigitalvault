@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
@@ -30,7 +30,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private folderService: FolderService,
     private toast: ToastService,
-    private feedbackService: FeedbackService
+    private feedbackService: FeedbackService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -39,12 +40,20 @@ export class DashboardComponent implements OnInit {
   }
 
   load() {
-    this.loading = true;
-    this.folderService.getAll().subscribe({
-      next: (res) => { this.folders = res.data ?? []; this.loading = false; },
-      error: () => { this.loading = false; }
-    });
-  }
+  this.loading = true;
+
+  this.folderService.getAll().subscribe({
+    next: (res) => {
+      this.folders = res.data ?? [];
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   createFolder() {
     if (!this.newFolderName.trim()) return;
