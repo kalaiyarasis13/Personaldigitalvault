@@ -8,12 +8,13 @@
           <div class="plan-name">{{ status.currentPlan }}</div>
         </div>
         <button
-          class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100"
-          *ngIf="status.currentPlan !== 'Premium'"
-          (click)="upgrade()"
-        >
-          Upgrade to Premium – $4.99/mo
-        </button>
+  type="button"
+  class="billing-action-button"
+  *ngIf="status.currentPlan !== 'Premium'"
+  (click)="upgrade()"
+>
+  Upgrade to Premium – $4.99/mo
+</button>
       </div>
   
       <div class="usage">
@@ -77,9 +78,14 @@
           ></textarea>
   
           <div class="feedback-actions">
-            <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 w-full mt-1.5" (click)="submitFeedback()" [disabled]="feedbackRating < 1 || submittingFeedback">
-              {{ submittingFeedback ? "Submitting..." : "Submit feedback" }}
-            </button>
+            <button
+  type="button"
+  class="billing-action-button billing-full-width"
+  (click)="submitFeedback()"
+  [disabled]="feedbackRating < 1 || submittingFeedback"
+>
+  {{ submittingFeedback ? "Submitting..." : "Submit feedback" }}
+</button>
             <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink w-full mt-1.5" (click)="skipFeedback()">Skip</button>
           </div>
         </div>
@@ -88,7 +94,13 @@
           <div class="success-check">✓</div>
           <h3>Thank you!</h3>
           <p class="stage-subtitle">Enjoy your Premium storage.</p>
-          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 w-full mt-1.5" (click)="closeModal()">Done</button>
+          <button
+  type="button"
+  class="billing-action-button billing-full-width"
+  (click)="closeModal()"
+>
+  Done
+</button>
         </div>
   
       </div>

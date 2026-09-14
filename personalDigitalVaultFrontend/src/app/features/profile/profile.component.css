@@ -6,3 +6,33 @@
 .section { padding: 24px; margin-bottom: 20px; max-width: 480px; }
 .section h2 { font-size: 15px; margin: 0 0 16px; }
 .section input:disabled { background: var(--color-surface-alt); color: var(--color-text-muted); }
+
+.profile-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-dark)
+  );
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px var(--color-primary-soft);
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.profile-action-button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.profile-action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -11,7 +11,7 @@
     <section class="section">
       <div class="section-header">
         <h2>Documents</h2>
-        <label class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100 relative">
+        <label class="folder-action-button">
           {{ uploading ? "Uploading..." : "+ Upload document" }}
           <input type="file" (change)="onFileSelected($event)" [disabled]="uploading" hidden />
         </label>
@@ -54,7 +54,11 @@
     <section class="section">
       <div class="section-header">
         <h2>Credential Records</h2>
-        <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100" (click)="showCredentialForm = !showCredentialForm">
+        <button
+  class="folder-action-button"
+  type="button"
+  (click)="showCredentialForm = !showCredentialForm"
+>
           {{ showCredentialForm ? "Cancel" : "+ Add credential" }}
         </button>
       </div>
@@ -102,9 +106,13 @@
         </p>
 
         <div class="form-actions">
-          <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 text-white bg-gradient-to-br from-primary to-primary-dark shadow-[0_4px_24px_var(--color-primary-soft),0_1px_2px_rgba(0,0,0,0.2)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_32px_var(--color-primary-soft),0_2px_4px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:brightness-100" type="submit" [disabled]="savingCredential">
-            {{ savingCredential ? "Saving..." : "Save credential" }}
-          </button>
+          <button
+  class="folder-action-button"
+  type="submit"
+  [disabled]="savingCredential"
+>
+  {{ savingCredential ? "Saving..." : "Save credential" }}
+</button>
           <button class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-transparent text-sm font-bold tracking-wide transition-all duration-150 active:scale-95 bg-surface-alt text-ink border-border hover:bg-primary-soft hover:border-primary" type="button" (click)="showCredentialForm = false">Cancel</button>
         </div>
       </form>
